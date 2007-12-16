@@ -1,0 +1,12 @@
+TODO list for SQLite-Work
+=========================
+ 17. change over SQLite::Work to a plugin archetecture
+    Added:18/08/06, 09:02  Priority: high
+
+ 18. search results with << 1 2 3 4 >> page links
+    Added:28/10/05, 08:42  Priority: medium
+
+ 19. make one able to disable the "other table" section in search
+    Added:28/10/05, 08:44  Priority: medium
+
+

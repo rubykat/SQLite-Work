@@ -1,0 +1,12 @@
+--database tfiles/test1.db
+--row_ids episodes=title_id
+--table episodes
+--sort_by category
+--sort_by series_title
+--sort_by season
+--sort_by season_position
+--sort_by title
+--sort_by sub_title
+--header "{$category}"
+--header "{$series_title}"
+--header "{?season Season [$season]}"

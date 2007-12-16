@@ -1,0 +1,34 @@
+# Version control files and dirs.
+\bRCS\b
+\bCVS\b
+,v$
+^_darcs/
+
+version.txt
+old_version.txt
+mod_devaid.conf
+darcs_prebuild.pl
+.todo
+^.releases/
+
+# distro files
+^SQLite-Work-*
+
+# ExtUtils::MakeMaker generated files and dirs.
+^Makefile$
+^blib/
+^blibdirs$
+^pm_to_blib$
+^MakeMaker-\d
+                                                                                                                    
+# Module::Build
+^Build$
+^_build/
+                                                                                                                    
+# Temp, old, vi and emacs files.
+~$
+\.old$
+^#.*#$
+^\.#
+\.swp$
+\.bak$
