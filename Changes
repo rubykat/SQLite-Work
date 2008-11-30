@@ -1,6 +1,15 @@
 Revision history for SQLite-Work
 ================================
 
+0.1002 Sun 30 November 2008
+---------------------------
+
+  * (2008-11-30) * fixes to Build.PL
+  * (2008-11-30) * corrected call to perl in test
+  * (2008-11-30) *Meta.yml is generated, so should not be under revision control.
+  * (2007-12-17) Make svk ignore generated files.
+  * (2007-12-16) revamped depot
+
 0.1001 Tue 26 June 2007
 -----------------------
 
