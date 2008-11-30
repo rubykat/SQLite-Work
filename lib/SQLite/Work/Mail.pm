@@ -8,11 +8,11 @@ SQLite::Work::Mail - send mail with data from an SQLite table.
 
 =head1 VERSION
 
-This describes version B<0.1001> of SQLite::Work::Mail.
+This describes version B<0.1002> of SQLite::Work::Mail.
 
 =cut
 
-our $VERSION = '0.1001';
+our $VERSION = '0.1002';
 
 =head1 SYNOPSIS
 

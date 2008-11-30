@@ -10,11 +10,11 @@ sqlw_mail - send mail with data from an SQLite table.
 
 =head1 VERSION
 
-This describes version B<0.1001> of sqlw_mail.
+This describes version B<0.1002> of sqlw_mail.
 
 =cut
 
-our $VERSION = '0.1001';
+our $VERSION = '0.1002';
 
 =head1 SYNOPSIS
 
