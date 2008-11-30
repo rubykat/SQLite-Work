@@ -72,7 +72,7 @@ sub compare {
 
 #-----------------------------------------------------------------
 
-my $script = "perl -I ./blib/lib scripts/sqlreport";
+my $script = "$^X -I ./blib/lib scripts/sqlreport";
 my $command = "$script --options tfiles/test1.args --table episodes --outfile test1.html";
 
 my $res = system($command);
