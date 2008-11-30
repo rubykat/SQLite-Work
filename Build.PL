@@ -21,7 +21,7 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More' => 0,
     },
-    create_makefile_pl => 'passthrough',
+    create_makefile_pl => 'traditional',
     script_files => [qw(scripts/sqlreport scripts/sqlw_mail scripts/sqlw_import)],
 
 );
