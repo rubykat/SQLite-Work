@@ -658,6 +658,8 @@ sub do_report {
 	page=>$page,
 	layout=>'table',
 	row_template=>$row_template,
+	prev_next_template=>$prev_next_template,
+	multi_page_template=>$multi_page_template,
 	outfile=>$outfile,
 	table_border=>1,
 	truncate_colnames=>0,
@@ -705,6 +707,8 @@ sub do_multi_page_report {
 	show=>[],
 	layout=>'table',
 	row_template=>'',
+	prev_next_template=>'',
+	multi_page_template=>'',
 	outfile=>'',
 	report_style=>'full',
 	title=>'',
@@ -755,6 +759,11 @@ sub do_multi_page_report {
     {
 	$title_main =~ s/ & / &amp; /g;
     }
+    my $multi_page_template = ($args{multi_page_template}
+		       ? $args{multi_page_template}
+	    : '<li><a href="{$outfile_link}">{$title_main} ({$page})</a></li>
+'
+		      );
     my $ind_contents;
     $ind_contents = "<ul>";
 
@@ -769,7 +778,8 @@ sub do_multi_page_report {
 			? sprintf("%s_%0*d%s",
 				  $outfile_prefix, $digits,
 				  $page - 1, $link_suffix)
-			: $args{outfile});
+			: sprintf("%s%s", $outfile_prefix, $link_suffix)
+			);
 	my $prevlabel = ($page > 1
 			? sprintf("%s (%d)", $title_main, $page - 1)
 			: sprintf("%s Index", $title_main));
@@ -789,32 +799,43 @@ sub do_multi_page_report {
 	    next_label=>$nextlabel,
 	    page=>$page);
 	print STDERR "$outfile\n" if $args{verbose};
-	$ind_contents .=
-	    "<li><a href='$outfile_link'>$title_main ($page)</a></li>\n";
+	my %mp_hash = (
+	    outfile_link=>$outfile_link,
+	    title_main=>$title_main,
+	    page=>$page,
+	);
+	my $mp_templ = $self->get_template($multi_page_template);
+	my $mp_str = $self->{_tobj}->fill_in(data_hash=>\%mp_hash,
+					     template=>$mp_templ);
+	$ind_contents .= $mp_str;
     }
     $ind_contents .= "</ul>\n";
 
     # append the prev-next links, if any
-    my $prev_file = $args{prev_file};
-    my $prev_label = $args{prev_label};
-    $prev_label =~ s/ & / &amp; /g;
-    my $next_file = $args{next_file};
-    my $next_label = $args{next_label};
-    $next_label =~ s/ & / &amp; /g;
-    if ($prev_file and $next_file)
+    if ($args{prev_file} or $args{next_file})
     {
-	$ind_contents .= "<hr/>\n";
-	$ind_contents .= "<p><a href=\"$prev_file\">$prev_label</a> <a href=\"$next_file\">$next_label</a></p>\n";
-    }
-    elsif ($prev_file)
-    {
-	$ind_contents .= "<hr/>\n";
-	$ind_contents .= "<p><a href=\"$prev_file\">$prev_label</a></p>\n";
-    }
-    elsif ($next_file)
-    {
-	$ind_contents .= "<hr/>\n";
-	$ind_contents .= "<p><a href=\"$next_file\">$next_label</a></p>\n";
+	my $prev_label = $args{prev_label};
+	$prev_label =~ s/ & / &amp; /g;
+	my $next_label = $args{next_label};
+	$next_label =~ s/ & / &amp; /g;
+	my %pn_hash = (
+		       prev_file => $args{prev_file},
+		       prev_label => $prev_label,
+		       next_file => $args{next_file},
+		       next_label => $next_label,
+		      );
+	my $pn_template = ($args{prev_next_template}
+			   ? $args{prev_next_template}
+			   : '<hr/>
+			   <p>{?prev_file <a href="[$prev_file]">[$prev_label]</a>}
+			   {?next_file <a href="[$next_file]">[$next_label]</a>}
+			   </p>
+			   '
+			  );
+	my $pn_templ = $self->get_template($pn_template);
+	my $pn_str = $self->{_tobj}->fill_in(data_hash=>\%pn_hash,
+					     template=>$pn_templ);
+	$ind_contents .= $pn_str;
     }
 
     # and make the index page
@@ -901,6 +922,7 @@ sub do_split_report {
 	show=>[],
 	layout=>'table',
 	row_template=>'',
+	split_ind_template=>'',
 	outfile=>'',
 	report_style=>'full',
 	title=>'',
@@ -950,6 +972,12 @@ sub do_split_report {
     # stuff for the index page
     my $title_main = ($args{title} ? $args{title} : "$args{table} $split_col");
     my %page_links = ();
+
+    my $si_template = ($args{split_ind_template}
+		       ? $args{split_ind_template}
+		       : '<a href="{$link}">{$label}</a>'
+		      );
+    my $si_templ = $self->get_template($si_template);
 
     # make a page for each split-value
     my %where = %{$args{where}};
@@ -1050,11 +1078,23 @@ sub do_split_report {
 		    # filter out some HTML stuff
 		    $label =~ s/ & / &amp; /g;
 		}
-		$page_links{$val} = "<a href='$outfile_link'>$label</a>\n";
+		my %si_hash = (
+		    link=>$outfile_link,
+		    label=>$label,
+		);
+		$page_links{$val} =
+		    $self->{_tobj}->fill_in(data_hash=>\%si_hash,
+					    template=>$si_templ);
 	    }
 	    else
 	    {
-		$page_links{''} = "<a href='$outfile_link'>$split_col (none)</a>\n";
+		my %si_hash = (
+		    link=>$outfile_link,
+		    label=>"$split_col (none)",
+		);
+		$page_links{''} =
+		    $self->{_tobj}->fill_in(data_hash=>\%si_hash,
+					    template=>$si_templ);
 	    }
 	}
     }
@@ -1108,7 +1148,7 @@ sub do_split_report {
 	}
 	$ind_contents .= ($split_alpha ? ' ' : '<li>');
 	$ind_contents .= $link;
-	$ind_contents .= ($split_alpha ? ' ' : '</li>');
+	$ind_contents .= ($split_alpha ? ' ' : "</li>\n");
     }
     $ind_contents .= ($split_alpha ? "</p>\n" : "</ul>\n");
 
@@ -1831,6 +1871,7 @@ sub print_select {
 	prev_label=>'Prev',
 	next_file=>'',
 	next_label=>'Next',
+	prev_next_template=>'',
 	@_
     );
     my @columns = @{$args{columns}};
@@ -1901,24 +1942,28 @@ EOT
     unshift @result, "<p><i>$self->{message}</i></p>\n", if $self->{message};
 
     # append the prev-next links, if any
-    my $prev_file = $args{prev_file};
-    my $prev_label = $args{prev_label};
-    my $next_file = $args{next_file};
-    my $next_label = $args{next_label};
-    if ($prev_file and $next_file)
+    if ($args{prev_file} or $args{next_file})
     {
-	push @result, "<hr/>\n";
-	push @result, "<p><a href=\"$prev_file\">$prev_label</a> <a href=\"$next_file\">$next_label</a></p>\n";
-    }
-    elsif ($prev_file)
-    {
-	push @result, "<hr/>\n";
-	push @result, "<p><a href=\"$prev_file\">$prev_label</a></p>\n";
-    }
-    elsif ($next_file)
-    {
-	push @result, "<hr/>\n";
-	push @result, "<p><a href=\"$next_file\">$next_label</a></p>\n";
+	my $prev_label = $args{prev_label};
+	my $next_label = $args{next_label};
+	my %pn_hash = (
+		       prev_file => $args{prev_file},
+		       prev_label => $prev_label,
+		       next_file => $args{next_file},
+		       next_label => $next_label,
+		      );
+	my $pn_template = ($args{prev_next_template}
+			   ? $args{prev_next_template}
+			   : '<hr/>
+			   <p>{?prev_file <a href="[$prev_file]">[$prev_label]</a>}
+			   {?next_file <a href="[$next_file]">[$next_label]</a>}
+			   </p>
+			   '
+			  );
+	my $pn_templ = $self->get_template($pn_template);
+	my $pn_str = $self->{_tobj}->fill_in(data_hash=>\%pn_hash,
+					     template=>$pn_templ);
+	push @result, $pn_str;
     }
 
     my $contents = join('', @result);
