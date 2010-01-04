@@ -10,11 +10,11 @@ sqlreport - make reports on a table in an SQLite database
 
 =head1 VERSION
 
-This describes version B<0.1002> of sqlreport.
+This describes version B<0.1002a> of sqlreport.
 
 =cut
 
-our $VERSION = '0.1002';
+our $VERSION = '0.1002a';
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ sqlreport --help | --manpage | --version
 sqlreport [ --all_pages ] --database I<database_file>
 [ --distinct ] { --force_show I<colname>=1 }
 { --groups I<template> } { --headers I<template> }
-[ --index_template I<template> ]
+[ --index_template I<template> ] [ --filename_format I<format> ]
 [ --layout I<string> ] [ --limit I<number> ] [ --link_suffix I<string> ]
 { --not_where I<colname>=1 } [ --outfile I<filename> ]
 [ --page I<number> ] [ --report_style I<string> ]
@@ -421,6 +421,7 @@ sub process_args ($) {
 	       'row_ids=s%',
 	       'report_template=s',
 	       'index_template=s',
+	       'filename_format=s',
 	       'table=s',
 	       'where=s%',
 	       'not_where=s%',
@@ -497,7 +498,7 @@ sub process_args ($) {
 
     # set the parameters for 'report'
     $data_ref->{report_params} = {};
-    foreach my $key (qw(verbose title table distinct where not_where sort_by sort_reversed force_show_cols show headers groups limit page report_style layout link_suffix table_border table_header truncate_colnames prev_next_template multi_page_template split_ind_template row_template outfile split_col split_alpha debug))
+    foreach my $key (qw(verbose title table distinct where not_where sort_by sort_reversed force_show_cols show headers groups limit page report_style layout link_suffix table_border table_header truncate_colnames prev_next_template multi_page_template split_ind_template row_template filename_format outfile split_col split_alpha debug))
     {
 	if (exists $data_ref->{args}->{$key})
 	{

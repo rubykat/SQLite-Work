@@ -8,11 +8,11 @@ SQLite::Work - report on and update an SQLite database.
 
 =head1 VERSION
 
-This describes version B<0.1002> of SQLite::Work.
+This describes version B<0.1002a> of SQLite::Work.
 
 =cut
 
-our $VERSION = '0.1002';
+our $VERSION = '0.1002a';
 
 =head1 SYNOPSIS
 
@@ -909,6 +909,7 @@ sub do_split_report {
 	table=>undef,
 	split_col=>'',
 	split_alpha=>0,
+	filename_format=>'namedalpha',
 	command=>'Select',
 	limit=>0,
 	page=>1,
@@ -945,7 +946,7 @@ sub do_split_report {
     my $outfile_suffix = '.html';
     if ($args{outfile})
     {
-	$args{outfile} =~ m#(.*)(\.\w+)$#;
+	$args{outfile} =~ m/(.*)(\.\w+)$/;
 	$outfile_prefix = $1;
 	$outfile_suffix = ($2 ? $2 : '.html');
     }
@@ -994,7 +995,7 @@ sub do_split_report {
 	warn "val=$val, niceval=$niceval\n" if $args{debug};
 
 	my $valbase = $self->{_tobj}->convert_value(value=>$niceval,
-	    format=>'namedalpha', name=>$split_col);
+	    format=>$args{filename_format}, name=>$split_col);
 	my $outfile = sprintf("%s%s%s",
 	    $outfile_prefix, $valbase, $outfile_suffix);
 	my $outfile_link = sprintf("%s%s%s",
@@ -1014,7 +1015,7 @@ sub do_split_report {
 						 name=>$split_col)
 		if ($self->{default_format}->{$args{table}}->{$split_col});
 	    my $prev_valbase = $self->{_tobj}->convert_value(value=>$prev_niceval,
-						    format=>'namedalpha',
+						    format=>$args{filename_format},
 						    name=>$split_col);
 	    $prev_file = sprintf("%s%s%s",
 				 $outfile_prefix,
@@ -1035,7 +1036,7 @@ sub do_split_report {
 						 name=>$split_col)
 		if ($self->{default_format}->{$args{table}}->{$split_col});
 	    my $next_valbase = $self->{_tobj}->convert_value(value=>$next_niceval,
-						    format=>'namedalpha',
+						    format=>$args{filename_format},
 						    name=>$split_col);
 	    $next_file = sprintf("%s%s%s",
 				 $outfile_prefix,
