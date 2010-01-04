@@ -8,11 +8,11 @@ SQLite::Work - report on and update an SQLite database.
 
 =head1 VERSION
 
-This describes version B<0.1002a> of SQLite::Work.
+This describes version B<0.100201> of SQLite::Work.
 
 =cut
 
-our $VERSION = '0.1002a';
+our $VERSION = '0.100201';
 
 =head1 SYNOPSIS
 
