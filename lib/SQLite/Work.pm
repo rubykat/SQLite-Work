@@ -1049,6 +1049,13 @@ sub do_split_report {
 	$prev_label =~ s/ & / &amp; /g;
 	my $next_label = "$next_niceval -&gt;";
 	$next_label =~ s/ & / &amp; /g;
+	my $mtitle = "$split_col: $niceval";
+	if ($args{split_titlefmt})
+	{
+	    $mtitle = $args{split_titlefmt};
+	    $mtitle =~ s/SPLIT_COL/$split_col/g;
+	    $mtitle =~ s/VALUE/$niceval/g;
+	}
 	if ($self->do_multi_page_report(%args,
 	    outfile=>$outfile,
 	    prev_file=>$prev_file,
@@ -1056,7 +1063,7 @@ sub do_split_report {
 	    next_file=>$next_file,
 	    next_label=>$next_label,
 	    where=>\%where,
-	    title=>"$split_col: $niceval"))
+	    title=>$mtitle))
 	{
 	    print STDERR "$outfile\n" if $args{verbose};
 	    if ($val)
