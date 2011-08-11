@@ -833,7 +833,7 @@ sub do_multi_page_report {
     # and make the index page
     my $out = $self->get_template($self->{index_template});
     $self->{index_template} = $out;
-    $out =~ s/<!--sqlr_title-->/$title_main Index/g;
+    $out =~ s/<!--sqlr_title-->/$title_main/g;
     $out =~ s/<!--sqlr_contents-->/$ind_contents/g;
     my $fh;
     open($fh, ">", $args{outfile})
