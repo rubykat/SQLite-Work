@@ -6,14 +6,6 @@ use warnings;
 
 SQLite::Work::CGI - Report and update a SQLite database using CGI
 
-=head1 VERSION
-
-This describes version B<0.100201> of SQLite::Work::CGI.
-
-=cut
-
-our $VERSION = '0.100201';
-
 =head1 SYNOPSIS
 
     use SQLite::Work::CGI;
@@ -327,12 +319,14 @@ sub do_single_update {
 	    if ($col ne $row_id_name)
 	    {
 		$update_values{$col} = $self->{cgi}->param($col);
+		$update_values{$col} =~ s/\r//g;
 	    }
 	}
     }
     else # update a single value
     {
 	$update_values{$update_field} = $self->{cgi}->param($update_field);
+	$update_values{$update_field} =~ s/\r//g;
     }
     if ($self->update_one_row(table=>$table,
 			      command=>$args{command},
@@ -409,8 +403,8 @@ sub do_add {
     my %vals = ();
     foreach my $col (@columns)
     {
-	my $val = $self->{cgi}->param($col);
-	$vals{$col} = $val;
+	$vals{$col} = $self->{cgi}->param($col);
+	$vals{$col} =~ s/\r//g;
     }
     if ($self->add_one_row(
 	table=>$table,

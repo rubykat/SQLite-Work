@@ -1,20 +1,12 @@
 #!/usr/bin/env perl
+package main;
 # vim:ts=8 sw=4 sts=4 ai
-require v5.6.1;
 use strict;
 use warnings;
 
 =head1 NAME
 
 sqlw_mail - send mail with data from an SQLite table.
-
-=head1 VERSION
-
-This describes version B<0.100201> of sqlw_mail.
-
-=cut
-
-our $VERSION = '0.100201';
 
 =head1 SYNOPSIS
 
@@ -241,7 +233,7 @@ sub process_args ($) {
 
     if ($data_ref->{'manpage'})
     {
-	pod2usage({ -message => "$0 version $VERSION",
+	pod2usage({ -message => "$0 version $::VERSION",
 		    -exitval => 0,
 		    -verbose => 2,
 	    });
@@ -259,7 +251,7 @@ sub process_args ($) {
     if (!$data_ref->{new_params}->{database})
     {
 	warn "$0: no database given!\n";
-	pod2usage({ -message => "$0 version $VERSION",
+	pod2usage({ -message => "$0 version $::VERSION",
 		    -exitval => 1,
 		    -verbose => 0,
 	    });
@@ -295,7 +287,7 @@ sub process_args ($) {
     if (!$data_ref->{mail_params}->{table})
     {
 	warn "$0: no table given!\n";
-	pod2usage({ -message => "$0 version $VERSION",
+	pod2usage({ -message => "$0 version $::VERSION",
 		    -exitval => 1,
 		    -verbose => 0,
 	    });

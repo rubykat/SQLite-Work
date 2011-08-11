@@ -6,14 +6,6 @@ use warnings;
 
 SQLite::Work - report on and update an SQLite database.
 
-=head1 VERSION
-
-This describes version B<0.100201> of SQLite::Work.
-
-=cut
-
-our $VERSION = '0.100201';
-
 =head1 SYNOPSIS
 
     use SQLite::Work;
@@ -2630,70 +2622,6 @@ sub build_where_conditions {
     }
     return @where;
 } # build_where_conditions
-
-=head1 REQUIRES
-
-    DBI
-    DBD::SQLite
-    POSIX
-
-    Test::More
-
-    The CGI module requires:
-
-    CGI
-
-    Scripts require:
-
-    Getopt::Long
-    Pod::Usage
-    Getopt::ArgvFile
-
-=head1 INSTALLATION
-
-To install this module, run the following commands:
-
-    perl Build.PL
-    ./Build
-    ./Build test
-    ./Build install
-
-Or, if you're on a platform (like DOS or Windows) that doesn't like the
-"./" notation, you can do this:
-
-   perl Build.PL
-   perl Build
-   perl Build test
-   perl Build install
-
-In order to install somewhere other than the default, such as
-in a directory under your home directory, like "/home/fred/perl"
-go
-
-   perl Build.PL --install_base /home/fred/perl
-
-as the first step instead.
-
-This will install the files underneath /home/fred/perl.
-
-You will then need to make sure that you alter the PERL5LIB variable to
-find the modules, and the PATH variable to find the script.
-
-Therefore you will need to change:
-your path, to include /home/fred/perl/script (where the script will be)
-
-	PATH=/home/fred/perl/script:${PATH}
-
-the PERL5LIB variable to add /home/fred/perl/lib
-
-	PERL5LIB=/home/fred/perl/lib:${PERL5LIB}
-
-
-=head1 SEE ALSO
-
-perl(1).
-DBI
-DBD::SQLite
 
 =head1 BUGS
 

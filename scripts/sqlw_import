@@ -1,20 +1,12 @@
 #!/usr/bin/env perl
+package main;
 # vim:ts=8 sw=4 sts=4 ai
-require v5.6.1;
 use strict;
 use warnings;
 
 =head1 NAME
 
 sqlw_import - import a Field:Value datafile into an SQLite database.
-
-=head1 VERSION
-
-This describes version B<0.100201> of sqlw_import.
-
-=cut
-
-our $VERSION = '0.100201';
 
 =head1 SYNOPSIS
 
@@ -134,7 +126,7 @@ sub process_args ($) {
 
     if ($data_ref->{options}->{'manpage'})
     {
-	pod2usage({ -message => "$0 version $VERSION",
+	pod2usage({ -message => "$0 version $::VERSION",
 		    -exitval => 0,
 		    -verbose => 2,
 	    });
@@ -142,21 +134,21 @@ sub process_args ($) {
 
     if (!$data_ref->{options}->{datafile})
     {
-	pod2usage({ -message => "$0 version $VERSION: no datafile",
+	pod2usage({ -message => "$0 version $::VERSION: no datafile",
 		    -exitval => 1,
 		    -verbose => 0,
 	    });
     }
     if (!$data_ref->{options}->{sqlitedb})
     {
-	pod2usage({ -message => "$0 version $VERSION: no SQLite database",
+	pod2usage({ -message => "$0 version $::VERSION: no SQLite database",
 		    -exitval => 1,
 		    -verbose => 0,
 	    });
     }
     if (!$data_ref->{options}->{table})
     {
-	pod2usage({ -message => "$0 version $VERSION: no SQLite table",
+	pod2usage({ -message => "$0 version $::VERSION: no SQLite table",
 		    -exitval => 1,
 		    -verbose => 0,
 	    });

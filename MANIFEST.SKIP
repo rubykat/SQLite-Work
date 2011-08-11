@@ -4,12 +4,9 @@
 ,v$
 ^_darcs/
 
-version.txt
-old_version.txt
-mod_devaid.conf
-darcs_prebuild.pl
 .todo
 ^.releases/
+^.build/
 
 # distro files
 ^SQLite-Work-*
@@ -20,11 +17,11 @@ darcs_prebuild.pl
 ^blibdirs$
 ^pm_to_blib$
 ^MakeMaker-\d
-                                                                                                                    
+
 # Module::Build
 ^Build$
 ^_build/
-                                                                                                                    
+
 # Temp, old, vi and emacs files.
 ~$
 \.old$
