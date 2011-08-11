@@ -1155,7 +1155,7 @@ sub do_split_report {
     # and make the index page
     my $out = $self->get_template($self->{index_template});
     $self->{index_template} = $out;
-    $out =~ s/<!--sqlr_title-->/$title_main Index/g;
+    $out =~ s/<!--sqlr_title-->/$title_main/g;
     $out =~ s/<!--sqlr_contents-->/$ind_contents/g;
     my $index_file = sprintf("%s%s%s",
 			  $outfile_prefix, $split_col, $outfile_suffix);
