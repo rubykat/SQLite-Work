@@ -956,6 +956,14 @@ sub make_buttons {
 <input type="hidden" name="Table" value="$table"/>
 <input type="hidden" name="Table2" value="$table2"/>
 <input type="submit" value="$command $table again"/>
+EOT
+    if ($command eq 'Edit')
+    {
+	push @out,<<EOT;
+<input type="submit" name="Add_Row" value="Add Row"/>
+EOT
+    }
+    push @out,<<EOT;
 </form></td>
 EOT
 
