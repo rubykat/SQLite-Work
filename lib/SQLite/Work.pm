@@ -355,6 +355,7 @@ sub do_disconnect {
 	show=>\@show,
 	distinct=>0,
 	headers=>\@headers,
+	header_start=>1,
 	groups=>\@groups,
 	limit=>$limit,
 	page=>$page,
@@ -437,6 +438,10 @@ This version can likewise use multiple columns in its display parts.
 =back
 
 The same format is used for L<groups> and L<row_template>.
+
+=item header_start
+
+At what level the headers should start.  Default is 1 (H1).
 
 =item layout
 
@@ -599,6 +604,7 @@ sub do_report {
 	page=>1,
 	table2=>'',
 	headers=>[],
+	header_start=>1,
 	groups=>[],
 	sort_by=>[],
 	sort_reversed=>{},
@@ -691,6 +697,7 @@ sub do_multi_page_report {
 	page=>1,
 	table2=>'',
 	headers=>[],
+	header_start=>1,
 	groups=>[],
 	sort_by=>[],
 	sort_reversed=>{},
@@ -858,6 +865,7 @@ sub do_multi_page_report {
 	sort_reversed=>\%sort_reversed,
 	show=>\@show,
 	headers=>\@headers,
+	header_start=>1,
 	groups=>\@groups,
 	limit=>$limit,
 	page=>$page,
@@ -907,6 +915,7 @@ sub do_split_report {
 	page=>1,
 	table2=>'',
 	headers=>[],
+	header_start=>1,
 	groups=>[],
 	sort_by=>[],
 	sort_reversed=>{},
@@ -1548,21 +1557,12 @@ sub make_selections {
 	limit=>0,
 	page=>1,
 	table2=>'',
-	headers=>[],
-	groups=>[],
 	sort_by=>[],
 	sort_reversed=>{},
 	not_where=>{},
 	where=>{},
 	show=>[],
 	distinct=>0,
-	layout=>'table',
-	row_template=>'',
-	outfile=>'',
-	report_style=>'full',
-	title=>'',
-	prev_file=>'',
-	next_file=>'',
 	@_
     );
     my $table = $args{table};
@@ -2121,6 +2121,7 @@ $my report = $self->format_report(
 	force_show_cols=>\%force_show_cols,
 	sort_by=>\@sort_by,
 	headers=>\@headers,
+	header_start=>1,
 	table2=>$table2,
 	layout=>'table',
 	row_template=>$row_template,
@@ -2149,6 +2150,7 @@ sub format_report {
     my @columns = @{$args{columns}};
     my @sort_by = @{$args{sort_by}};
     my @headers = @{$args{headers}};
+    my $header_start = $args{header_start} || 1;
     my @groups = @{$args{groups}};
     my %force_show_cols = %{$args{force_show_cols}};
     my $command = $args{command};
@@ -2303,7 +2305,7 @@ sub format_report {
 		    }
 		    # only make a header if it has content
 		    push @out, sprintf("<h%d>%s</h%d>\n",
-				       $hi + 1, $hval, $hi + 1)
+				       $hi + $header_start, $hval, $hi + $header_start)
 					if $hval;
 		    # and group content, if there is any
 		    push @out, "<p>$gval</p>\n", if $gval;
