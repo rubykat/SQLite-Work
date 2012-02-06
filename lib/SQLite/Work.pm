@@ -351,7 +351,6 @@ sub do_disconnect {
 	where=>\%where,
 	not_where=>\%not_where,
 	sort_by=>\@sort_by,
-	sort_reversed=>\%sort_reversed,
 	show=>\@show,
 	distinct=>0,
 	headers=>\@headers,
@@ -533,11 +532,8 @@ be shown when a L<row_template> has not been given.
 =item sort_by
 
 An array of column names by which the result should be sorted.
-
-=item sort_reversed
-
-A hash of column names where the sorting given in L<sort_by> should
-be reversed.
+If the column name is prefixed with a "-", the sort order should
+be reversed for that column.
 
 =item table
 
@@ -606,8 +602,7 @@ sub do_report {
 	headers=>[],
 	header_start=>1,
 	groups=>[],
-	sort_by=>[],
-	sort_reversed=>{},
+	sort_by=>undef,
 	not_where=>{},
 	where=>{},
 	show=>[],
@@ -648,7 +643,6 @@ sub do_report {
 	where=>\%where,
 	not_where=>\%not_where,
 	sort_by=>\@sort_by,
-	sort_reversed=>\%sort_reversed,
 	show=>\@show,
 	headers=>\@headers,
 	groups=>\@groups,
@@ -699,8 +693,7 @@ sub do_multi_page_report {
 	headers=>[],
 	header_start=>1,
 	groups=>[],
-	sort_by=>[],
-	sort_reversed=>{},
+	sort_by=>undef,
 	not_where=>{},
 	where=>{},
 	show=>[],
@@ -862,7 +855,6 @@ sub do_multi_page_report {
 	where=>\%where,
 	not_where=>\%not_where,
 	sort_by=>\@sort_by,
-	sort_reversed=>\%sort_reversed,
 	show=>\@show,
 	headers=>\@headers,
 	header_start=>1,
@@ -917,8 +909,7 @@ sub do_split_report {
 	headers=>[],
 	header_start=>1,
 	groups=>[],
-	sort_by=>[],
-	sort_reversed=>{},
+	sort_by=>undef,
 	not_where=>{},
 	where=>{},
 	show=>[],
@@ -1557,8 +1548,7 @@ sub make_selections {
 	limit=>0,
 	page=>1,
 	table2=>'',
-	sort_by=>[],
-	sort_reversed=>{},
+	sort_by=>undef,
 	not_where=>{},
 	where=>{},
 	show=>[],
@@ -1568,8 +1558,11 @@ sub make_selections {
     my $table = $args{table};
     my $command = $args{command};
 
-    my @sort_by = @{$args{sort_by}};
-    my %sort_reversed = %{$args{sort_reversed}};
+    my @sort_by = (!defined $args{sort_by}
+	? ()
+	: (!ref $args{sort_by}
+	    ? split(' ', $args{sort_by})
+		: @{$args{sort_by}}));
     my @columns = (@{$args{show}}
 	? @{$args{show}}
 	: $self->get_colnames($table));
@@ -1611,9 +1604,9 @@ sub make_selections {
 	$jquery .= " ORDER BY ";
 	foreach my $col (@sort_by)
 	{
-	    if ($sort_reversed{$col})
+	    if ($col =~ /^-(.*)/)
 	    {
-		push @order_by, "$col DESC";
+		push @order_by, "$1 DESC";
 	    }
 	    else
 	    {
@@ -1875,7 +1868,6 @@ sub print_select {
 	@_
     );
     my @columns = @{$args{columns}};
-    my @sort_by = @{$args{sort_by}};
     my $table = $args{table};
     my $page = $args{page};
 
@@ -1892,7 +1884,7 @@ sub print_select {
 	table=>$table,
 	table2=>$args{table2},
 	columns=>\@columns,
-	sort_by=>\@sort_by,
+	sort_by=>$args{sort_by},
 	num_pages=>$num_pages,
 	);
     my $main_title = ($args{title} ? $args{title}
@@ -2148,7 +2140,11 @@ sub format_report {
 	@_
     );
     my @columns = @{$args{columns}};
-    my @sort_by = @{$args{sort_by}};
+    my @sort_by = (!defined $args{sort_by}
+	? ()
+	: (!ref $args{sort_by}
+	    ? split(' ', $args{sort_by})
+		: @{$args{sort_by}}));
     my @headers = @{$args{headers}};
     my $header_start = $args{header_start} || 1;
     my @groups = @{$args{groups}};
