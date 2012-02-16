@@ -7,8 +7,8 @@
 --sort_by season_position
 --sort_by title
 --sort_by sub_title
---header "{$category}"
---header "{$series_title:title}"
+--headers "{$category}"
+--headers "{$series_title:title}"
 --limit 20
 --page 10
 --report_style medium

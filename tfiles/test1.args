@@ -7,6 +7,6 @@
 --sort_by season_position
 --sort_by title
 --sort_by sub_title
---header "{$category}"
---header "{$series_title}"
---header "{?season Season [$season]}"
+--headers "{$category}"
+--headers "{$series_title}"
+--headers "{?season Season [$season]}"
