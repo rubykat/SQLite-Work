@@ -984,10 +984,10 @@ sub do_split_report {
 					{$args{table}}->{$split_col},
 					name=>$split_col)
 	    if ($self->{default_format}->{$args{table}}->{$split_col});
-	warn "val=$val, niceval=$niceval\n" if $args{debug};
 
 	my $valbase = $self->{_tobj}->convert_value(value=>$niceval,
 	    format=>$args{filename_format}, name=>$split_col);
+	warn "val=$val, niceval=$niceval, valbase=$valbase\n" if $args{debug};
 	my $outfile = sprintf("%s%s%s",
 	    $outfile_prefix, $valbase, $outfile_suffix);
 	my $outfile_link = sprintf("%s%s%s",
