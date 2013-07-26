@@ -2205,18 +2205,24 @@ sub format_report {
 
     # make headers for all the headers
     # set the headers and entry columns
-    my %in_header = ();
     my %prev_head = ();
     if (@sort_by and @headers)
     {
-	for (my $i=0; $i < @headers && $i < @sort_by; $i++)
+        for (my $i=0; $i < @headers && $i < @sort_by; $i++)
 	{
 	    $prev_head{$i} = '';
 	    # read each header template if it's a file
 	    $headers[$i] = $self->get_template($headers[$i]);
-	}
-	# find out what fields are in the headers
-	my $all_headers = join('', @headers);
+            # read each 'group' template if the template is a file
+            if (@groups and exists $groups[$i] and defined $groups[$i])
+            {
+		$groups[$i] = $self->get_template($groups[$i]);
+            }
+        }
+
+	# find out what fields are in the headers and groups
+        my %in_header = ();
+	my $all_headers = join('', @headers, @groups);
 	while ($all_headers =~ m/{\$(\w+)[:\w]*}/)
 	{
 	    $in_header{$1} = 1;
@@ -2232,14 +2238,6 @@ sub format_report {
 	    if ($in_header{$col} && !$force_show_cols{$col})
 	    {
 		$show_cols{$col} = 0;
-	    }
-	}
-	# read each 'group' template if the template is a file
-	if (@groups)
-	{
-	    foreach my $group (@groups)
-	    {
-		$group = $self->get_template($group);
 	    }
 	}
     }
