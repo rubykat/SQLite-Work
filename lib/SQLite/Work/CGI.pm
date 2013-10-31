@@ -1038,9 +1038,9 @@ EOT
 	    my (@vals) = $self->{cgi}->param($pfield);
 	    foreach my $val (@vals)
 	    {
-		$result .= "<input type='hidden' name='$pfield' value='";
-		$result .= $val;
-		$result .= "'/>\n";
+                $result .=<<EOT;
+<input type='hidden' name="$pfield" value="${val}"/>
+EOT
 	    }
 	}
     }
