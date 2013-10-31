@@ -1193,7 +1193,7 @@ sub get_total_matching {
     my $table = $args{table};
 
     # build up the query data
-    my @where = $self->build_where_conditions(
+    my @where = $self->build_where_conditions(%args,
 	where=>$args{where}, not_where=>$args{not_where});
     
     my $total_query = "SELECT COUNT(*) FROM $table";
@@ -1575,7 +1575,7 @@ sub make_selections {
     $offset = 0 if $offset < 0;
 
     # build up the query data
-    my @where = $self->build_where_conditions(
+    my @where = $self->build_where_conditions(%args,
 	where=>$args{where}, not_where=>$args{not_where});
     
     my $jquery = '';
@@ -1815,7 +1815,7 @@ sub get_distinct_col {
     my $colname = $args{colname};
 
     # build up the query data
-    my @where = $self->build_where_conditions(
+    my @where = $self->build_where_conditions(%args,
 	where=>$args{where}, not_where=>$args{not_where});
     
     my $query = "SELECT DISTINCT $colname FROM $table";
