@@ -654,6 +654,7 @@ sub do_report {
 	multi_page_template=>$multi_page_template,
 	outfile=>$outfile,
 	table_border=>1,
+	table_class=>'plain',
 	truncate_colnames=>0,
 	report_style=>'full',
 	link_suffix=>'.html',
@@ -865,6 +866,7 @@ sub do_multi_page_report {
 	row_template=>$row_template,
 	outfile=>$outfile,
 	table_border=>1,
+	table_class=>'plain',
 	truncate_colnames=>0,
 	report_style=>'full',
 	link_suffix=>'.html',
@@ -2120,6 +2122,7 @@ $my report = $self->format_report(
 	report_style=>'compact',
 	table_header=>$thead,
 	table_border=>1,
+	table_class=>'plain',
 	truncate_colnames=>0,
     );
 
@@ -2154,6 +2157,7 @@ sub format_report {
     my $table2 = $args{table2};
     my $report_style = $args{report_style};
     my $table_border = $args{table_border};
+    my $table_class = $args{table_class};
     my $truncate_colnames = $args{truncate_colnames};
 
     # change things depending on report_style
@@ -2166,6 +2170,17 @@ sub format_report {
 	else
 	{
 	    $table_border = 1;
+	}
+    }
+    if (!defined $table_class)
+    {
+	if ($report_style eq 'bare')
+	{
+	    $table_class = '';
+	}
+	else
+	{
+	    $table_class = 'plain';
 	}
     }
     if (!defined $truncate_colnames)
@@ -2310,7 +2325,8 @@ sub format_report {
 	if ($new_section)
 	{
 	    push @out, $self->start_section(type=>$args{layout},
-					  table_border=>$table_border);
+					  table_border=>$table_border,
+                                          table_class=>$table_class);
 	    if ($report_style ne 'bare'
 		and $args{layout} eq 'table')
 	    {
@@ -2511,10 +2527,13 @@ sub set_nice_cols {
 =head2 start_section
 
 $sect = $self->start_section(type=>'table',
-    table_border=>$table_border);
+    table_border=>$table_border,
+    table_class=>$table_class);
 
 Start a new table/para/list
 The 'table_border' option is the border-size of the table
+if using table style
+The 'table_class' option is the class of the table
 if using table style
 
 =cut
@@ -2528,7 +2547,9 @@ sub start_section {
 
     if ($args{type} eq 'table')
     {
-	return '<table border="' . $args{table_border} . '" class="plain">';
+        return sprintf('<table%s%s>',
+                       ($args{table_border} ? ' border="' . $args{table_border} . '"' : ''),
+                       ($args{table_class} ? ' class="' . $args{table_class} . '"' : ''));
     }
     elsif ($args{type} eq 'para')
     {
