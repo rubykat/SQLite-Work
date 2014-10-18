@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 package main;
+
 # vim:ts=8 sw=4 sts=4 ai
 use strict;
 use warnings;
