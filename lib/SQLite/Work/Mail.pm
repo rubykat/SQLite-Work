@@ -1,4 +1,5 @@
 package SQLite::Work::Mail;
+
 use strict;
 use warnings;
 

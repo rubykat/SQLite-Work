@@ -1,4 +1,5 @@
 package SQLite::Work::CGI;
+
 use strict;
 use warnings;
 

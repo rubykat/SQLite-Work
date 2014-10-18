@@ -1,4 +1,5 @@
 package SQLite::Work;
+
 use strict;
 use warnings;
 
