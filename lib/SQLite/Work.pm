@@ -1588,7 +1588,21 @@ sub make_selections {
     if (@columns)
     {
 	$query .= "DISTINCT " if $args{distinct};
-	$query .= join(", ", @columns);
+        my %column_aliases = $self->set_column_aliases(columns=>\@columns);
+        # alias columns which are function calls
+        for (my $i=0; $i < @columns; $i++)
+        {
+            $query .= $columns[$i];
+            if ($columns[$i] =~ /\(/) # a function
+            {
+                $query .= " AS " . $column_aliases{$columns[$i]};
+            }
+            if ($i < (@columns - 1))
+            {
+                $query .= ", ";
+            }
+        }
+        #$query .= join(", ", @columns);
     }
     else
     {
@@ -2208,11 +2222,14 @@ sub format_report {
     my $count = 0;
     my $row_id_name = $self->get_id_colname($table);
     my $row_id_ind;
-    # by default, show all columns
+ 
+    # Note that the show-columns need to be by alias, because the aliases
+    # are what will be in the data-hash
+    my %column_aliases = $self->set_column_aliases(columns=>\@columns);
     my %show_cols = ();
     for (my $i = 0; $i < @columns; $i++)
     {
-	$show_cols{$columns[$i]} = 1;
+	$show_cols{$column_aliases{$columns[$i]}} = 1;
 	if ($columns[$i] eq $row_id_name)
 	{
 	    $row_id_ind = $i;
@@ -2253,11 +2270,11 @@ sub format_report {
 	{
 	    if ($in_header{$col} && !$force_show_cols{$col})
 	    {
-		$show_cols{$col} = 0;
+		$show_cols{$column_aliases{$col}} = 0;
 	    }
 	}
     }
-    #
+    
     # Set the nicer column name labels
     my %nice_cols = $self->set_nice_cols(truncate_colnames=>$truncate_colnames,
 	columns=>\@columns);
@@ -2269,6 +2286,7 @@ sub format_report {
 	report_style=>$args{report_style},
 	columns=>\@columns,
 	show_cols=>\%show_cols,
+        column_aliases=>\%column_aliases,
 	nice_cols=>\%nice_cols);
     my $thead = $self->get_template($args{table_header});
     if (%nice_cols and !$thead)
@@ -2276,7 +2294,7 @@ sub format_report {
 	$thead .= '<thead><tr>';
 	foreach my $col (@columns)
 	{
-	    if ($show_cols{$col})
+	    if ($show_cols{$column_aliases{$col}})
 	    {
 		my $nicecol = $nice_cols{$col};
 		$thead .= "<th>$nicecol</th>";
@@ -2369,6 +2387,7 @@ sub get_row_template {
 	report_style=>'full',
 	columns=>undef,
 	show_cols=>undef,
+	column_aliases=>undef,
 	nice_cols=>undef,
 	@_
     );
@@ -2392,9 +2411,10 @@ sub get_row_template {
 	    push @rt, "<tr>";
 	    foreach my $col (@{$args{columns}})
 	    {
-		if ($args{show_cols}->{$col})
+                my $alias = $args{column_aliases}->{$col};
+		if ($args{show_cols}->{$alias})
 		{
-		    push @rt, "<td>{?$col [\$$col";
+		    push @rt, "<td>{?$alias [\$$alias";
 		    push @rt, ':',
 			$self->{default_format}->{$args{table}}->{$col}
 			if ($self->{default_format}->{$args{table}}->{$col});
@@ -2408,16 +2428,17 @@ sub get_row_template {
 	    push @rt, "<p>";
 	    foreach my $col (@{$args{columns}})
 	    {
-		if ($args{show_cols}->{$col})
+                my $alias = $args{column_aliases}->{$col};
+		if ($args{show_cols}->{$alias})
 		{
 		    if ($args{report_style} ne 'bare')
 		    {
-			push @rt, "{?$col <strong>";
+			push @rt, "{?$alias <strong>";
 			push @rt, $args{nice_cols}->{$col};
 			push @rt, ":</strong> ";
 		    }
 		    push @rt, "[\$";
-		    push @rt, $col;
+		    push @rt, $alias;
 		    push @rt, ':',
 			$self->{default_format}->{$args{table}}->{$col}
 			if ($self->{default_format}->{$args{table}}->{$col});
@@ -2431,9 +2452,10 @@ sub get_row_template {
 	    push @rt, "<li>";
 	    foreach my $col (@{$args{columns}})
 	    {
-		if ($args{show_cols}->{$col})
+                my $alias = $args{column_aliases}->{$col};
+		if ($args{show_cols}->{$alias})
 		{
-		    push @rt, "{\$$col";
+		    push @rt, "{\$$alias";
 		    push @rt, ':',
 			$self->{default_format}->{$args{table}}->{$col}
 			if ($self->{default_format}->{$args{table}}->{$col});
@@ -2447,9 +2469,10 @@ sub get_row_template {
 	    # field:value
 	    foreach my $col (@{$args{columns}})
 	    {
-		if ($args{show_cols}->{$col})
+                my $alias = $args{column_aliases}->{$col};
+		if ($args{show_cols}->{$alias})
 		{
-		    push @rt, "$col:{\$$col";
+		    push @rt, "$alias:{\$$alias";
 		    push @rt, ':',
 			$self->{default_format}->{$args{table}}->{$col}
 			if ($self->{default_format}->{$args{table}}->{$col});
@@ -2463,9 +2486,10 @@ sub get_row_template {
 	    # one value on each line, no HTML
 	    foreach my $col (@{$args{columns}})
 	    {
-		if ($args{show_cols}->{$col})
+                my $alias = $args{column_aliases}->{$col};
+		if ($args{show_cols}->{$alias})
 		{
-		    push @rt, "{\$$col";
+		    push @rt, "{\$$alias";
 		    push @rt, ':',
 			$self->{default_format}->{$args{table}}->{$col}
 			if ($self->{default_format}->{$args{table}}->{$col});
@@ -2524,6 +2548,34 @@ sub set_nice_cols {
     }
     return %nice_cols;
 } # set_nice_cols
+
+=head2 set_column_aliases
+
+Set aliases for columns if the columns are functions.
+
+    %column_aliases = $self->set_column_aliases(
+	columns=>\@columns);
+
+=cut
+sub set_column_aliases {
+    my $self = shift;
+    my %args = (
+	columns=>[],
+	@_
+    );
+
+    my %aliases = ();
+    foreach my $col (@{$args{columns}})
+    {
+	my $alias = $col;
+        if ($col =~ /\(/) # a function )
+        {
+            $alias =~ s/[^a-zA-Z0-9_]//g;
+        }
+	$aliases{$col} = $alias;
+    }
+    return %aliases;
+} # set_column_aliases
 
 =head2 start_section
 
